@@ -1,0 +1,32 @@
+name: Release plugin
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 1.0.0"
+        default: "1.0.0"
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zip the add-on folder
+        run: |
+          NAME="${{ github.event.repository.name }}"
+          MOD="${NAME//-/_}"
+          mkdir -p build/"$MOD"
+          rsync -a --exclude ".git*" --exclude build ./ build/"$MOD"/
+          (cd build && zip -r "../$NAME.zip" "$MOD")
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event_name == 'push' && github.ref_name || format('v{0}', inputs.version) }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            gh release delete "$TAG" -y --cleanup-tag 2>/dev/null || true
+          fi
+          gh release create "$TAG" "${{ github.event.repository.name }}.zip" --title "$TAG" --generate-notes --target "${{ github.sha }}"
