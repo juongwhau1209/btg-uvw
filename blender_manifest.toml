@@ -1,0 +1,26 @@
+schema_version = "1.0.1"
+
+id = "btg_uvw"
+version = "1.1.0"
+name = "BTG.UVW"
+tagline = "UVW Map kiểu 3ds Max cho nội thất: kích thước ván thật, vân gỗ đúng hướng"
+maintainer = "Trần Duy Dương <ktsduongtran.architect@gmail.com>"
+type = "add-on"
+
+tags = ["UV", "Material", "3D View"]
+
+blender_version_min = "4.2.0"
+
+license = ["SPDX:GPL-3.0-or-later"]
+copyright = ["2026 Trần Duy Dương"]
+
+# Đọc thư mục texture, lưu khổ ván người dùng (~/.btg/btg_uvw)
+[permissions]
+files = "Đọc ảnh texture và lưu khổ ván người dùng trong ~/.btg/btg_uvw"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "*.pyc",
+  "/tests/",
+]
